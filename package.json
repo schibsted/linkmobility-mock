@@ -1,0 +1,27 @@
+{
+  "name": "linkmobility-mock",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app",
+    "test": "grunt test"
+  },
+  "dependencies": {
+    "express": "~4.4.4",
+    "body-parser": "~1.4.3",
+    "express-winston": "~0.2.6",
+    "winston": "~0.7.3",
+    "request": "~2.36.0",
+    "xml": "0.0.12",
+    "node-uuid": "~1.4.1"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-contrib-jshint": "~0.10.0",
+    "time-grunt": "~0.3.2",
+    "load-grunt-tasks": "~0.6.0",
+    "jshint-stylish": "~0.2.0",
+    "grunt-express-server": "~0.4.17"
+  }
+}
