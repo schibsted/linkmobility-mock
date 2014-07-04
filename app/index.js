@@ -17,7 +17,8 @@ var logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)({
             colorize: true,
-            level: 'debug'
+            level: 'debug',
+            timestamp: true
         }),
     ]
 });
@@ -30,7 +31,8 @@ app.use(expressWinston.logger({
     transports: [
         new winston.transports.Console({
             json: true,
-            colorize: true
+            colorize: true,
+            timestamp: true
         })
     ]
 }));
