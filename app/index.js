@@ -35,6 +35,8 @@ app.use(expressWinston.logger({
     ]
 }));
 
+var caller = callback({ url: urls.delivery, logger: logger });
+
 app.all('*', function(req, res) {
 
     logger.info(req.body);
@@ -46,12 +48,12 @@ app.all('*', function(req, res) {
 
     setTimeout(function() {
         message = formatter({ id: id, status: 202 });
-        callback({url: urls.delivery, message: message, logger: logger});
+        caller(message);
     }, 1000);
 
     setTimeout(function() {
         message = formatter({ id: id, status: 203 });
-        callback({url: urls.delivery, message: message, logger: logger});
+        caller(message);
     }, 2000);
 
 });
