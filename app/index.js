@@ -2,13 +2,15 @@
 
 var express = require('express'),
     bodyParser = require('body-parser'),
-    xml = require('xml'),
     uuid = require('node-uuid'),
-    request = require('request'),
     winston = require('winston'),
-    expressWinston = require('express-winston');
+    expressWinston = require('express-winston'),
+    formatter = require('./formatter.js'),
+    callback = require('./callback.js');
 
-var callbackDelivery = 'http://spp.dev/callback/smsdelivery';
+var urls = {
+    'delivery': 'http://spp.dev/callback/smsdelivery'
+};
 
 // application logger
 var logger = new (winston.Logger)({
@@ -34,64 +36,19 @@ app.use(expressWinston.logger({
 }));
 
 app.all('*', function(req, res) {
-    logger.info(req);
     var id = uuid.v1();
-    var xmlres = xml({
-        gatedr: [
-            { id: id },
-            { status: 201 },
-            { statusMessage: { _cdata: 'OK: Sent to gateway' } },
-            { operator: 'NO_TN' },
-            { operatorStatusCode: 200 },
-            { operatorStatusMessage: ''}
-        ]
-    }, { declaration: true });
+    var message = formatter({ id: id, status: 201 });
     res.set('Content-Type', 'text/xml');
-    res.send(200, xmlres);
+    res.send(200, message);
 
     setTimeout(function() {
-        var xmlres = xml({
-            gatedr: [
-                { id: id },
-                { status: 202 },
-                { statusMessage: { _cdata: 'OK: Sent to gateway' } },
-                { operator: 'NO_TN' },
-                { operatorStatusCode: 200 },
-                { operatorStatusMessage: ''}
-            ]
-        }, { declaration: true });
-
-        request.post({
-            url: callbackDelivery,
-            headers: { 'Content-Type': 'text/xml' },
-            body: xmlres
-        }, function(err, response, body) {
-            logger.info('Callback 202 sent');
-            logger.info(err, response, body);
-        });
-
+        message = formatter({ id: id, status: 202 });
+        callback({url: urls.delivery, message: message, logger: logger});
     }, 1000);
 
     setTimeout(function() {
-        var xmlres = xml({
-            gatedr: [
-                { id: id },
-                { status: 203 },
-                { statusMessage: { _cdata: 'OK: Sent to gateway' } },
-                { operator: 'NO_TN' },
-                { operatorStatusCode: 200 },
-                { operatorStatusMessage: ''}
-            ]
-        }, { declaration: true });
-
-        request.post({
-            url: callbackDelivery,
-            headers: { 'Content-Type': 'text/xml' },
-            body: xmlres
-        }, function(err, response, body) {
-            logger.info('Callback 203 sent');
-            logger.info(err, response, body);
-        });
+        message = formatter({ id: id, status: 203 });
+        callback({url: urls.delivery, message: message, logger: logger});
     }, 2000);
 
 });
