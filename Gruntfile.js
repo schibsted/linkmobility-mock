@@ -20,10 +20,6 @@ module.exports = function (grunt) {
                 options: {
                     spawn: false
                 }
-            },
-            test: {
-                files:  [ 'app/**/*.js', 'test/**/*.js' ],
-                tasks:  [ 'test' ],
             }
         },
 
@@ -43,26 +39,11 @@ module.exports = function (grunt) {
             },
             all: [
                 'Gruntfile.js',
-                'app/**/*.js',
-                'test/**/*.js'
+                'app/**/*.js'
             ]
-        },
-
-        mochaTest: {
-            options: {
-                reporter: 'spec'
-            },
-            test: {
-                src: ['test/**/*_test.js']
-            }
         }
 
     });
-
-    grunt.registerTask('test', [
-        'jshint',
-        'mochaTest:test'
-    ]);
 
     grunt.registerTask('serve', [
         'express',
