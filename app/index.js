@@ -36,6 +36,9 @@ app.use(expressWinston.logger({
 }));
 
 app.all('*', function(req, res) {
+
+    logger.info(req.body);
+
     var id = uuid.v1();
     var message = formatter({ id: id, status: 201 });
     res.set('Content-Type', 'text/xml');
