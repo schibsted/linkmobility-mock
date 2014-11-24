@@ -2,6 +2,7 @@
 
 var express = require('express'),
     bodyParser = require('body-parser'),
+    xmlparser = require('express-xml-bodyparser'),
     uuid = require('node-uuid'),
     winston = require('winston'),
     expressWinston = require('express-winston'),
@@ -12,6 +13,7 @@ var express = require('express'),
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(xmlparser());
 
 // request logger
 app.use(expressWinston.logger({
