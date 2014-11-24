@@ -1,10 +1,13 @@
 'use strict';
 
 var express = require('express'),
+    http = require('http'),
     bodyParser = require('body-parser'),
     uuid = require('node-uuid'),
     winston = require('winston'),
     expressWinston = require('express-winston'),
+    winstonWebsocket = require('winston-websocket'),
+    _ = require('underscore'),
     formatter = require('./formatter.js'),
     callback = require('./callback.js'),
     config = require('./config.js');
@@ -35,6 +38,16 @@ var logger = new (winston.Logger)({
     ]
 });
 
+var server = http.createServer(app);
+
+if(_.contains(config.logger, 'websocket')) {
+    logger.add(winstonWebsocket.WSTransport, { wsoptions: { server: server, path: '/logs' } });
+    logger.info('Winston websocket logger is enabled');
+
+    app.use(express.static(__dirname + '/public'));
+}
+
+
 var caller = callback({ url: config.urls.delivery, logger: logger });
 
 app.post('*', function(req, res) {
@@ -59,6 +72,6 @@ app.post('*', function(req, res) {
 });
 
 
-var server = app.listen(process.env.PORT || 3010, function() {
+server.listen(process.env.PORT || 3010, function() {
     logger.info('Listening on port %d', server.address().port);
 });
