@@ -6,22 +6,9 @@ var express = require('express'),
     winston = require('winston'),
     expressWinston = require('express-winston'),
     formatter = require('./formatter.js'),
-    callback = require('./callback.js');
+    callback = require('./callback.js'),
+    config = require('./config.js');
 
-var urls = {
-    'delivery': 'http://spp.dev/callback/smsdelivery'
-};
-
-// application logger
-var logger = new (winston.Logger)({
-    transports: [
-        new (winston.transports.Console)({
-            colorize: true,
-            level: 'debug',
-            timestamp: true
-        }),
-    ]
-});
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -37,9 +24,20 @@ app.use(expressWinston.logger({
     ]
 }));
 
-var caller = callback({ url: urls.delivery, logger: logger });
+// application logger
+var logger = new (winston.Logger)({
+    transports: [
+        new (winston.transports.Console)({
+            colorize: true,
+            level: 'debug',
+            timestamp: true
+        }),
+    ]
+});
 
-app.all('*', function(req, res) {
+var caller = callback({ url: config.urls.delivery, logger: logger });
+
+app.post('*', function(req, res) {
 
     logger.info(req.body);
 
